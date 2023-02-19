@@ -1,3 +1,4 @@
+let ProjectId = document.getElementById("projectId")
 let TaskName = document.getElementById("task_name")
 let Description1 = document.getElementById("desc")
 let Team1 = document.getElementById("team_group")
@@ -8,12 +9,20 @@ let currUpdateBtn1 = document.getElementById("addtask_btn1")
 let tbody1 = document.getElementById("tbody1");
 
 // Check for Product List in Local Storage
-let ProjectList1 = [];
+var ProjectList1 = [];
 if (localStorage.getItem("task")) {
     ProjectList1 = JSON.parse(localStorage.getItem("task"))
     console.log("found local storage");
 } else {
     console.log("no local storage found");
+}
+
+function findRow(index){
+    var rowID = ProjectList[index]
+     ProjectId.value = rowID.id;
+    Team1.value = rowID.Team;
+    console.log("team--->>",Team1.value);
+    console.log("id------->>>",ProjectId.value);
 }
 
 var select = document.getElementById('team_group').options.length;
@@ -41,11 +50,10 @@ for (var i = 0; i < ProjectList.length; i++) {
         document.getElementById('ProjectName').add(newSelect);
       }
       
-
 // Create Product
 function createTaskProject() {
-    debugger;
     let thisProd = {
+        id: ProjectId.value,
         TaskName:TaskName.value,
         Description1: Description1.value,
         Team1: Team1.value,
@@ -55,7 +63,7 @@ function createTaskProject() {
     }
     ProjectList1.push(thisProd);
     saveProj();
-    showTaskData();
+    showData();
     ClearForm();
 }
 // Save Data in LocalStorage
@@ -73,32 +81,32 @@ function ClearForm() {
     EndDate1.value = "";
 }
 // Read and Show Data In Table (output)
-function showTaskData() {
-    let table1 = ``;
-    for (let i = 0; i < ProjectList1.length; i++) {
-        table1 += `           <tr>
-                        <td>${ProjectList1[i].TaskName}</td>
-                        <td>${ProjectList1[i].Description1}</td>
-                        <td>${ProjectList1[i].Team1}</td>
-                        <td>${ProjectList1[i].Startdate1}</td>
-                        <td>${ProjectList1[i].EndDate1}</td>
-                    <td><input id = "update1" data-toggle="modal" data-target="#myModal1" style="color: white;background-color: green;border-radius: 7px;"  onclick="updateProj(${i})" type="button" value="Update"></td>
-                        <td><input  style="color: white;background-color: red;border-radius: 7px;" onclick="deleteProj(${i})" type="button" value="Delete"></td>
-                    </tr>`
-    }
-    tbody1.innerHTML = table1;
-}
+// function showData() {
+//     let table1 = ``;
+//     for (let i = 0; i < ProjectList1.length; i++) {
+//         table1 += `           <tr>
+//                         <td>${ProjectList1[i].TaskName}</td>
+//                         <td>${ProjectList1[i].Description1}</td>
+//                         <td>${ProjectList1[i].Team1}</td>
+//                         <td>${ProjectList1[i].Startdate1}</td>
+//                         <td>${ProjectList1[i].EndDate1}</td>
+//                     <td><input id = "update1" data-toggle="modal" data-target="#myModal1" style="color: white;background-color: green;border-radius: 7px;"  onclick="updateProj(${i})" type="button" value="Update"></td>
+//                         <td><input  style="color: white;background-color: red;border-radius: 7px;" onclick="deleteProj(${i})" type="button" value="Delete"></td>
+//                     </tr>`
+//     }
+//     tbody1.innerHTML = table1;
+// }
 // Delete a product
 function deleteProj(i) {
     if (confirm("Do you want to delte you records?")) {
         ProjectList1.splice(i, 1);
         localStorage.task = JSON.stringify(ProjectList1);
-        showTaskData();
+        showData();
     }
 }
 // Submit button ( Create Or Update)
 function submitTask() {
-    debugger;
+    //debugger;
     let taskname = TaskName.value;
     let description1 = Description1.value;
     let team1 = Team1.value;
@@ -148,7 +156,7 @@ function submitTask() {
 }
 // Update a product
 function updateProj(i) {
-    debugger;
+   // debugger;
    currUpdateBtn1 = i;
     TaskName.value = ProjectList1[i].TaskName;
     Description1.value = ProjectList1[i].Description1;
@@ -163,7 +171,7 @@ function updateProj(i) {
     })
 }
 function submitUpdateTask(i) {
-    debugger;
+   // debugger;
     ProjectList1[i].TaskName = TaskName.value;
     ProjectList1[i].Description1 = Description1.value;
     ProjectList1[i].Team1 = Team1.value;
@@ -171,15 +179,15 @@ function submitUpdateTask(i) {
     ProjectList1[i].Startdate1 = Startdate1.value;
     ProjectList1[i].EndDate1 = EndDate1.value;
     localStorage.task = JSON.stringify(ProjectList1);
-    showTaskData();
+    showData();
     document.getElementById("Add_Task").setAttribute("value", "Add");
     ClearForm();
 }
 function cancelTaskOption(){
-    debugger
+    //debugger
     if(document.getElementById("update")){
         return  document.getElementById("Add_Task").setAttribute("value", "Add") || ClearForm();
     }
     
 }
-showTaskData();
+showData();
