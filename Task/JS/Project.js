@@ -17,11 +17,17 @@ if (localStorage.getItem("products")) {
   console.log("no local storage found");
 }
 //generate id
-let currentId = 0;
+let currentMaxId = 0;
 function generateId() {
-  currentId++;
-  return currentId;
+  const maxId = ProjectList.reduce(
+    (max, project) => Math.max(max, project.id),
+    0
+  );
+  const nextId = Math.max(maxId, currentMaxId) + 1;
+  currentMaxId = nextId;
+  return nextId;
 }
+
 // Create Product
 function createProject() {
   debugger;
@@ -32,7 +38,7 @@ function createProject() {
     Technology: Technology.value,
     Team: Team.value,
     StartDate: Startdate.value,
-    EndDate: EndDate.value
+    EndDate: EndDate.value,
   };
   ProjectList.push(thisProd);
   saveProject();
@@ -52,18 +58,18 @@ function clearInput() {
   Technology.value = "";
   Startdate.value = "";
   EndDate.value = "";
-  document.querySelectorAll('input[type="checkbox"]').forEach(function(checkbox) {
-				checkbox.checked = false;
-			});
-  }
-
-
+  document
+    .querySelectorAll('input[type="checkbox"]')
+    .forEach(function (checkbox) {
+      checkbox.checked = false;
+    });
+}
 
 // Read and Show Data In Table (output)
 function showData() {
   let table = ``;
   for (let i = 0; i < ProjectList.length; i++) {
-    table +=  `  
+    table += `  
                     <tr rows${i}>
                         <td>${ProjectList[i].ProjectName}</td>
                         <td>${ProjectList[i].Description}</td>
@@ -71,13 +77,39 @@ function showData() {
                         <td>${ProjectList[i].Technology}</td>
                         <td>${ProjectList[i].StartDate}</td>
                         <td>${ProjectList[i].EndDate}</td>
-                    <td><input id ="update" data-toggle="modal" data-target="#myModal" style="color: white;background-color: green;border-radius: 7px;"  onclick="updateProject(${i})" type="button" value="Update"></td>
+                        <td><input id ="update" data-toggle="modal" data-target="#myModal" style="color: white;background-color: green;border-radius: 7px;"  onclick="updateProject(${i})" type="button" value="Update"></td>
                         <td><input id = "delete(${i})"  style="color: white;background-color: red;border-radius: 7px;" onclick="deleteProject(${i})" type="button" value="Delete"></td>
-                        <td><input   data-toggle="modal"data-target="#myModal1" id="addtask_btn1(${i})"  style="color: white;background-color: grey;border-radius: 7px;"type="button" value="Add Task"></td>
+                        <td><input onclick="findRow(${i})"  data-toggle="modal"data-target="#myModal1" id="addtask_btn1(${i})"  style="color: white;background-color: grey;border-radius: 7px;" onclick="addTask(${i})" type="button" value="Add Task"></td>
                     </tr>`;
+
+    // add the task data if available for the current project
+    for (let j = 0; j < ProjectList1.length; j++) {
+    //  if (ProjectList1[j].ProjectId === ProjectList[i].id) {
+      table += `
+          <thead>
+                  <th>Task Name</th>
+                  <th>Discription</th>
+                  <th>Developer</th>
+                  <th>Start date</th>
+                  <th>End Date</th>
+                  <th>Update</th>
+                  <th>Delete</th>
+          </thead>           
+          <tr class="task-row">
+            <td>${ProjectList[j].TaskName}</td>
+            <td>${ProjectList[j].Description1}</td>
+            <td>${ProjectList[j].Team1}</td>
+            <td>${ProjectList[j].Startdate1}</td>
+            <td>${ProjectList[j].EndDate1}</td>
+            <td><input id = "update1" data-toggle="modal" data-target="#myModal1" style="color: white;background-color: green;border-radius: 7px;"  onclick="updateProj(${i})" type="button" value="Update"></td>
+            <td><input  style="color: white;background-color: red;border-radius: 7px;" onclick="deleteProj(${i})" type="button" value="Delete"></td>
+          </tr>`;
+    }
   }
   tbody.innerHTML = table;
 }
+//}
+
 // Delete a product
 function deleteProject(i) {
   debugger;
@@ -89,68 +121,68 @@ function deleteProject(i) {
 }
 // Submit button ( Create Or Update)
 function submit() {
-    let projectName = ProjectName.value;
-    let description = Description.value;
-    let team = Team.value;
-    let technology = Technology.value;
-    let startDate = Startdate.value;
-    let endDate = EndDate.value;
-  
-    let textRegex = /^[^\s].+[^\s]$/;
-    let dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-    var regex = /\s/g;
-  
-    if (!projectName.match(textRegex)) {
-      alert("Please Enter Project Name, Starting space not allowed");
-      return false;
-    }
-    if (!description.match(textRegex)) {
-      alert("Please Enter Discripton, Starting space not allowed");
-      return false;
-    }
-    if (team == "") {
-      alert("Please Select Developer");
-      return false;
-    }
-    if (technology == "") {
-      alert("Please Select Technology");
-      return false;
-    }
-    if (!startDate.match(dateRegex)) {
-      alert("Please Select Start Date");
-      return false;
-    }
-    if (!endDate.match(dateRegex)) {
-      alert("Please Select End Date");
-      return false;
-    }
-    
-    // Add datepicker validation for end date
-    const startDateField = document.getElementById("startdate");
-    const endDateField = document.getElementById("endDate");
-  
-    startDateField.addEventListener("change", function () {
-      endDateField.min = startDateField.value;
-    });
-  
-    // Add validation for end date
-    const selectedStartDate = new Date(startDate);
-    const selectedEndDate = new Date(endDate);
-    if (selectedEndDate < selectedStartDate) {
-      alert('End date cannot be less than start date');
-      return false;
-    }
-  
-    let btnValue = document.getElementById("create").getAttribute("value");
-    console.log(btnValue);
-    if (btnValue == "Create") {
-      createProject();
-    } else if (btnValue == "Update") {
-      submitUpdate(currUpdateBtn);
-    }
+  let projectName = ProjectName.value;
+  let description = Description.value;
+  let team = Team.value;
+  let technology = Technology.value;
+  let startDate = Startdate.value;
+  let endDate = EndDate.value;
+
+  let textRegex = /^[^\s].+[^\s]$/;
+  let dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+  var regex = /\s/g;
+
+  if (!projectName.match(textRegex)) {
+    alert("Please Enter Project Name, Starting space not allowed");
+    return false;
   }
-  
-// Update a product 
+  if (!description.match(textRegex)) {
+    alert("Please Enter Discripton, Starting space not allowed");
+    return false;
+  }
+  if (team == "") {
+    alert("Please Select Developer");
+    return false;
+  }
+  if (technology == "") {
+    alert("Please Select Technology");
+    return false;
+  }
+  if (!startDate.match(dateRegex)) {
+    alert("Please Select Start Date");
+    return false;
+  }
+  if (!endDate.match(dateRegex)) {
+    alert("Please Select End Date");
+    return false;
+  }
+
+  // Add datepicker validation for end date
+  const startDateField = document.getElementById("startdate");
+  const endDateField = document.getElementById("endDate");
+
+  startDateField.addEventListener("change", function () {
+    endDateField.min = startDateField.value;
+  });
+
+  // Add validation for end date
+  const selectedStartDate = new Date(startDate);
+  const selectedEndDate = new Date(endDate);
+  if (selectedEndDate < selectedStartDate) {
+    alert("End date cannot be less than start date");
+    return false;
+  }
+
+  let btnValue = document.getElementById("create").getAttribute("value");
+  console.log(btnValue);
+  if (btnValue == "Create") {
+    createProject();
+  } else if (btnValue == "Update") {
+    submitUpdate(currUpdateBtn);
+  }
+}
+
+// Update a product
 function updateProject(i) {
   currUpdateBtn = i;
   ProjectName.value = ProjectList[i].ProjectName;
@@ -180,7 +212,11 @@ function submitUpdate(i) {
 }
 //cancel option function
 function cancelOption() {
-  if (document.getElementById("update") && document.getElementById("technology") && document.getElementById("team")) {
+  if (
+    document.getElementById("update") &&
+    document.getElementById("technology") &&
+    document.getElementById("team")
+  ) {
     return (
       document.getElementById("create").setAttribute("value", "Create") ||
       clearInput()
@@ -188,36 +224,38 @@ function cancelOption() {
   }
 }
 //dropdown function
- const checkboxLists = document.querySelectorAll('.list, .list1');
+const checkboxLists = document.querySelectorAll(".list, .list1");
 
-        function toggleList(list) {
-            list.classList.toggle('show');
-        }
+function toggleList(list) {
+  list.classList.toggle("show");
+}
 
-        function handleCheckboxChange(inputField, selectField, checkboxes) {
-            const checkedBoxes = [...checkboxes].filter(checkbox => checkbox.checked);
-            const selectedTasksText = checkedBoxes.map(checkbox => checkbox.parentNode.textContent.trim()).join(', ');
-            inputField.value = selectedTasksText;
-            selectField.classList.toggle('selected', checkedBoxes.length > 0);
-        }
+function handleCheckboxChange(inputField, selectField, checkboxes) {
+  const checkedBoxes = [...checkboxes].filter((checkbox) => checkbox.checked);
+  const selectedTasksText = checkedBoxes
+    .map((checkbox) => checkbox.parentNode.textContent.trim())
+    .join(", ");
+  inputField.value = selectedTasksText;
+  //selectField.classList.toggle('selected', checkedBoxes.length > 0);
+}
 
-        function initializeMultiSelector(selector) {
-            const inputField = selector.querySelector('.input-selector');
-            const selectField = selector.querySelector('.select-field, .select-field1');
-            const checkboxes = selector.querySelectorAll('input[type="checkbox"]');
+function initializeMultiSelector(selector) {
+  const inputField = selector.querySelector(".input-selector");
+  const selectField = selector.querySelector(".select-field, .select-field1");
+  const checkboxes = selector.querySelectorAll('input[type="checkbox"]');
 
-            checkboxes.forEach(checkbox => {
-                checkbox.addEventListener('change', () => {
-                    handleCheckboxChange(inputField, selectField, checkboxes);
-                });
-            });
+  checkboxes.forEach((checkbox) => {
+    checkbox.addEventListener("change", () => {
+      handleCheckboxChange(inputField, selectField, checkboxes);
+    });
+  });
 
-            inputField.addEventListener('click', () => {
-                toggleList(selector.querySelector('.list, .list1'));
-            });
-        }
+  inputField.addEventListener("click", () => {
+    toggleList(selector.querySelector(".list, .list1"));
+  });
+}
 
-        checkboxLists.forEach(list => {
-            initializeMultiSelector(list.parentNode);
-        });
+checkboxLists.forEach((list) => {
+  initializeMultiSelector(list.parentNode);
+});
 showData();
