@@ -10,7 +10,6 @@
         integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous" />
     <link rel="stylesheet"
         href="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag/dist/css/multi-select-tag.css">
-    <script src="https://cdn.jsdelivr.net/gh/habibmhamadi/multi-select-tag/dist/js/multi-select-tag.js"></script>
     <link rel="stylesheet" href="./CSS/styles.css" />
     <link rel="stylesheet" href="./CSS/styles1.css">
 </head>
@@ -21,10 +20,29 @@
             <div class="col-md-12">
                 <div class="modal-box">
                     <!-- Button trigger modal -->
-                    <button type="button" class="btn btn-primary btn-lg show-modal" data-toggle="modal"
-                        data-target="#myModal" id="addtask_btn">Add
-                        Project
-                    </button>
+                    <div>
+                        <button type="button" class="btn btn-primary btn-lg show-modal" data-toggle="modal"
+                            data-target="#myModal" id="addtask_btn">Add
+                            Project
+                        </button>
+                    </div>
+                    <div class="header">
+                        <div class="item-controler">
+                            <h5>Show</h5>
+                            <select class="pageSelect" name="state" id="maxRows">
+                                <option class="page" value="3" selected>3</option>
+                                <option class="page" value="5">5</option>
+                                <option class="page" value="7">7</option>
+                                <option class="page" value="15">15</option>
+                                <option class="page" value="30">30</option>
+                            </select>
+                            </select>
+                            <h5>Per Page</h5>
+                        </div>
+                        <div class="Search">
+                            <input type="text" id="myInput" placeholder="Enter your Search key..." onkeyup="Search()" />
+                        </div>
+                    </div>
                     <!-- Modal -->
                     <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
                         <div class="modal-dialog" role="document">
@@ -36,22 +54,22 @@
                                     <h3 class="title">Project form</h3>
                                     <p class="description">Please Add Data to Given Fields</p>
                                     <div class="form-group">
-                                        <label>Project Name*</label><label class="validation-error hide"
-                                            id="fullNameValidationError">This field is required.</label>
+                                        <label>Project Name*</label>
                                         <input type="text" name="ProjectName" id="projectname" />
                                     </div>
+                                    <span class="errorMessage" id="projectError" style="color: red;"> </span>
                                     <div class="form-group">
                                         <label>Discription*</label>
                                         <input type="text" name="Discription" id="description" />
                                     </div>
+                                    <span id="descError" class="error" style="color: red;"></span>
                                     <!-- team Dropdown -->
                                     <div class="form-group">
                                         <div class="multi-selector">
-                                            <label>Team</label>
+                                            <label>Team*</label>
                                             <div class="select-field">
                                                 <input type="text" name="" placeholder="Choose tasks" id="team"
-                                                    class="input-selector">
-                                                <span id="team" class="selected-tasks"></span>
+                                                    class="input-selector" readonly>
                                                 <div id="team" class="list">
                                                     <label for="task1" class="task">
                                                         <input type="checkbox" class="team" id="team">
@@ -74,45 +92,50 @@
                                                         Parth
                                                     </label>
                                                 </div>
+                                                <span class="error" id="teamError" style="color: red;"></span>
                                             </div>
                                         </div>
                                     </div>
+                                    <!-- technology Dropdown -->
                                     <div class="form-group">
                                         <div class="multi-selector">
-                                            <label>Technology</label>
-                                            <div class="select-field1">
+                                            <label>Technology*</label>
+                                            <div id="select-field1">
                                                 <input type="text" name="" placeholder="Choose tasks" id="technology"
-                                                    class="input-selector">
+                                                    class="input-selector" readonly>
                                             </div>
-                                            <div class="list1">
+                                            <div id="technology" class="list1">
 
                                                 <label for="task1" class="task1">
-                                                    <input type="checkbox" name="" id="technology">
+                                                    <input type="checkbox" class="technology" id="technology">
                                                     JavaScript
                                                 </label>
                                                 <label for="task2" class="task1">
-                                                    <input type="checkbox" name="" id="technology">
+                                                    <input type="checkbox" class="technology" id="technology">
                                                     Angular.js
                                                 </label>
                                                 <label for="task3" class="task1">
-                                                    <input type="checkbox" name="" id="technology">
+                                                    <input type="checkbox" class="technology" id="technology">
                                                     React.js
                                                 </label>
                                                 <label for="task4" class="task1">
-                                                    <input type="checkbox" name="" id="technology">
+                                                    <input type="checkbox" class="technology" id="technology">
                                                     Node.js
                                                 </label>
                                             </div>
                                         </div>
+                                        <span class="error" id="techError" style="color: red;"></span>
                                     </div>
                                     <div class="form-group">
                                         <label>Start Date*</label>
                                         <input type="date" name="StartDate" id="startdate" />
                                     </div>
+                                    <span id="projectStartdate" class="error" style="color: red;"></span>
                                     <div class="form-group">
                                         <label>End Date*</label>
                                         <input type="date" name="EndDate" id="enddate" />
                                     </div>
+                                    <span id="projectEnddate" class="error" style="color: red;"></span>
                                     <div class="form-group">
                                         <input type="reset" value="Reset" id="reset" onclick="clearInput()" />
                                         <input type="button" onclick="submit()" value="Create" id="create" />
@@ -121,21 +144,33 @@
                             </div>
                         </div>
                     </div>
-                    <div class="data">
-                        <table id="table">
-                            <thead>
-                                <th>Project Name</th>
-                                <th>Discription</th>
-                                <th>Developer</th>
-                                <th>Technology</th>
-                                <th>Start date</th>
-                                <th>End Date</th>
-                                <th>Update</th>
-                                <th>Delete</th>
-                                <th>Add Task</th>
-                            </thead>
-                            <tbody id="tbody"></tbody>
-                        </table>
+                    <div id="DataTable1">
+                        <div id="table_box_bootstrap">
+                            <table id="table">
+                                <thead>
+                                    <th></th>
+                                    <th>Project Name<i class="fa-solid"></i></th>
+                                    <th>Discription<i class="fa-solid"></i></th>
+                                    <th>Developer<i class="fa-solid"></i></th>
+                                    <th>Technology<i class="fa-solid"></i></th>
+                                    <th>Start date<i class="fa-solid"></i></th>
+                                    <th>End Date<i class="fa-solid"></i></th>
+                                    <th>Update</th>
+                                    <th>Delete</th>
+                                    <th>Add Task</th>
+                                </thead>
+                                <tbody id="tbody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="bottom-filed">
+                        <ul class="pagination">
+                            <li><a href="#" id="next">Next</a></li>
+                        </ul>
+                        <div class="pagination" id="number"></div>
+                        <ul class="pagination">
+                            <li><a href="#" id="prev">Previous</a></li>
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -154,28 +189,26 @@
                                 <div class="modal-body">
                                     <h3 class="title">Task form</h3>
                                     <p class="description">Please Add Data to Given Fields</p>
-<!--                                     <div class="form-group">
-                                        <label for="ProjectName">Project Name</label>
-                                        <select name="ProjectName" id="ProjectName">
-                                           
-                                        </select>
-                                        </div> -->
+                                    <!-- form Input fields starting -->
                                     <div class="form-group">
-                                        <label>Task Name*</label><label class="validation-error hide"
-                                            id="fullNameValidationError">This field is required.</label>
+                                        <label>ProjectID*</label>
+                                        <input type="text" name="ProjectId" id="projectId" readonly />
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Task Name*</label><label class="validation-error
+                        hide" id="fullNameValidationError">This field is required.</label>
                                         <input type="text" name="TaskName" id="task_name" />
                                     </div>
                                     <div class="form-group">
                                         <label>Discription*</label>
                                         <input type="text" name="Description" id="desc" />
                                     </div>
-<!--                                     <div class="form-group">
+                                    <!-- Developer Team Dropdown -->
+                                    <div class="form-group">
                                         <label for="Team">Team</label>
                                         <select name="TeamGroup" id="team_group">
-                                    
                                         </select>
-                                    </div> -->
-                                
+                                    </div>
                                     <div class="form-group">
                                         <label>Start Date*</label>
                                         <input type="date" name="StartDate" id="start_date" />
@@ -193,22 +226,6 @@
                             </div>
                         </div>
                     </div>
-<!--                     <div class="table-responsive">
-                        <div class="data1">
-                            <table class="table1" id="table1">
-                                <thead>
-                                    <th>Task Name</th>
-                                    <th>Discription</th>
-                                    <th>Developer</th>
-                                    <th>Start date</th>
-                                    <th>End Date</th>
-                                    <th>Update</th>
-                                    <th>Delete</th>
-                                </thead>
-                                <tbody id="tbody1"></tbody>
-                            </table>
-                        </div> -->
-                    </div>
                 </div>
             </div>
         </div>
@@ -220,5 +237,6 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
     integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
     crossorigin="anonymous"></script>
+<script src="https://kit.fontawesome.com/7e1008fd11.js" crossorigin="anonymous"></script>
 
 </html>
